@@ -1,0 +1,77 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "instanceName": {
+      "type": "string"
+    },
+    "accountName": {
+      "type": "string"
+    },
+    "accountKey": {
+      "type": "securestring"
+    },
+    "queueName": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string",
+      "defaultValue": "112567/queueprocessor:v1"
+    },
+    "cpu": {
+      "type": "string",
+      "defaultValue": "0.5"
+    },
+    "memoryInGB": {
+      "type": "string",
+      "defaultValue": "0.5"
+    }
+  },
+  "variables": {
+    "containerProperties": {
+      "image": "[parameters('image')]",
+      "resources": {
+        "requests": {
+          "cpu": "[parameters('cpu')]",
+          "memoryInGB": "[parameters('memoryInGB')]"
+        }
+      },
+      "environmentVariables": [
+        {
+          "name": "AccountName",
+          "value": "[parameters('accountName')]"
+        },
+        {
+          "name": "AccountKey",
+          "value": "[parameters('accountKey')]"
+        },
+        {
+          "name": "QueueName",
+          "value": "[parameters('queueName')]"
+        }
+      ]
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('instanceName')]",
+      "type": "Microsoft.ContainerInstance/containerGroups",
+      "apiVersion": "2018-04-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "containers": [
+          {
+            "name": "container-1",
+            "properties": "[variables('containerProperties')]"
+          },
+          {
+            "name": "container-2",
+            "properties": "[variables('containerProperties')]"
+          }
+        ],
+        "osType": "Linux",
+        "restartPolicy": "OnFailure"
+      }
+    }
+  ]
+}

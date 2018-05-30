@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  queueprocessor:
+    image: ${DOCKER_REGISTRY}queueprocessor
+    build:
+      context: .
+      dockerfile: QueueProcessor/Dockerfile
